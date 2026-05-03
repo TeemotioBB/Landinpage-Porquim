@@ -6,6 +6,8 @@
 <title>MAYCON – Controle seus gastos pelo WhatsApp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Mercado Pago SDK -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <style>
   :root {
     --green: #1DB954;
@@ -21,7 +23,6 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -33,7 +34,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ─── NOISE OVERLAY ─── */
   body::before {
     content: '';
     position: fixed;
@@ -44,7 +44,6 @@
     opacity: 0.6;
   }
 
-  /* ─── NAV ─── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -84,7 +83,6 @@
   }
   .nav-cta:hover { background: var(--green-light); transform: scale(1.03); }
 
-  /* ─── HERO ─── */
   .hero {
     position: relative;
     min-height: 100svh;
@@ -151,10 +149,7 @@
     animation: fade-up 0.7s ease 0.25s forwards;
   }
 
-  h1 span {
-    color: var(--green);
-    font-style: italic;
-  }
+  h1 span { color: var(--green); font-style: italic; }
 
   .hero-sub {
     margin-top: 20px;
@@ -208,7 +203,6 @@
   }
   .btn-ghost:hover { color: var(--text); }
 
-  /* ─── PHONE MOCK ─── */
   .phone-section {
     padding: 0 28px 80px;
     display: flex;
@@ -220,6 +214,7 @@
   .phone-wrap {
     position: relative;
     width: 270px;
+    animation: float 5s ease-in-out infinite;
   }
 
   .phone-frame {
@@ -327,43 +322,47 @@
     animation: msg-in 0.4s ease forwards;
   }
 
-  .receipt-tag {
-    font-size: 0.6rem;
-    color: var(--green);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .receipt-val {
-    font-family: 'Fraunces', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--green-light);
-    line-height: 1;
-  }
-  .receipt-cat {
-    font-size: 0.65rem;
-    color: var(--muted);
-    margin-top: 3px;
-  }
-  .receipt-hash {
-    font-size: 0.6rem;
-    color: rgba(29,185,84,0.5);
-    margin-top: 5px;
-    font-family: monospace;
-  }
+  .receipt-tag { font-size: 0.6rem; color: var(--green); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .receipt-val { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: var(--green-light); line-height: 1; }
+  .receipt-cat { font-size: 0.65rem; color: var(--muted); margin-top: 3px; }
+  .receipt-hash { font-size: 0.6rem; color: rgba(29,185,84,0.5); margin-top: 5px; font-family: monospace; }
 
-  @keyframes msg-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes msg-in { to { opacity: 1; transform: translateY(0); } }
 
   .m1 { animation-delay: 1.2s; }
   .m2 { animation-delay: 1.8s; }
   .m3 { animation-delay: 2.5s; }
   .m4 { animation-delay: 3.1s; }
 
-  /* ─── STATS BAR ─── */
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 9px 13px;
+    background: #1a2e1c;
+    border-radius: 14px 14px 14px 4px;
+    align-self: flex-start;
+    width: fit-content;
+    opacity: 0;
+    animation: msg-in 0.4s ease 2.3s forwards;
+  }
+  .typing-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--muted);
+    animation: typing 1.2s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
   .stats-bar {
     margin: 0 20px 70px;
     background: var(--card);
@@ -387,44 +386,16 @@
 
   .stat-item { text-align: center; }
   .stat-item:not(:last-child) { border-right: 1px solid var(--border); }
-
-  .stat-val {
-    font-family: 'Fraunces', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--green);
-    display: block;
-  }
+  .stat-val { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 700; color: var(--green); display: block; }
   .stat-label { font-size: 0.68rem; color: var(--muted); line-height: 1.3; margin-top: 2px; }
 
-  /* ─── SECTION HEADERS ─── */
   .section { padding: 70px 24px; }
-  .section-label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(1.8rem, 7vw, 2.6rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    margin-bottom: 14px;
-  }
+  .section-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+  .section-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 7vw, 2.6rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 14px; }
   .section-sub { font-size: 0.9rem; color: var(--muted); line-height: 1.7; max-width: 340px; }
 
-  /* ─── FEATURES ─── */
   .features { padding: 0 20px 70px; }
-  .feat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 36px;
-  }
+  .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 36px; }
 
   .feat-card {
     background: var(--card);
@@ -436,10 +407,7 @@
     transition: border-color 0.3s, transform 0.3s;
     cursor: default;
   }
-  .feat-card:hover {
-    border-color: rgba(29,185,84,0.3);
-    transform: translateY(-2px);
-  }
+  .feat-card:hover { border-color: rgba(29,185,84,0.3); transform: translateY(-2px); }
   .feat-card.full { grid-column: 1 / -1; }
 
   .feat-icon {
@@ -454,30 +422,14 @@
     margin-bottom: 12px;
   }
 
-  .feat-title {
-    font-size: 0.82rem;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: #daeedd;
-  }
+  .feat-title { font-size: 0.82rem; font-weight: 500; margin-bottom: 6px; color: #daeedd; }
   .feat-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.55; }
 
-  /* ─── HOW IT WORKS ─── */
   .how-section { padding: 70px 24px; }
   .steps { margin-top: 36px; display: flex; flex-direction: column; gap: 0; }
 
-  .step {
-    display: flex;
-    gap: 18px;
-    position: relative;
-  }
-
-  .step-line-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-shrink: 0;
-  }
+  .step { display: flex; gap: 18px; position: relative; }
+  .step-line-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
 
   .step-num {
     width: 36px; height: 36px;
@@ -505,121 +457,447 @@
   .step-content { padding-bottom: 36px; padding-top: 5px; }
   .step-title { font-size: 0.92rem; font-weight: 500; margin-bottom: 5px; color: #daeedd; }
   .step-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+  .step-example { margin-top: 10px; background: rgba(29,185,84,0.07); border: 1px solid rgba(29,185,84,0.18); border-radius: 10px; padding: 8px 12px; font-size: 0.72rem; color: var(--green-light); font-family: monospace; }
 
-  .step-example {
-    margin-top: 10px;
-    background: rgba(29,185,84,0.07);
-    border: 1px solid rgba(29,185,84,0.18);
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 0.72rem;
-    color: var(--green-light);
-    font-family: monospace;
-  }
-
-  /* ─── CATEGORIES ─── */
   .cats-section { padding: 0 24px 70px; }
-  .cats-grid {
-    margin-top: 28px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .cat-pill {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 9px 16px;
-    font-size: 0.78rem;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    transition: all 0.2s;
-  }
+  .cats-grid { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .cat-pill { background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 9px 16px; font-size: 0.78rem; display: flex; align-items: center; gap: 7px; transition: all 0.2s; }
   .cat-pill:hover { border-color: rgba(29,185,84,0.4); background: var(--green-glow); }
 
-  /* ─── UPCOMING ─── */
   .upcoming-section { padding: 0 24px 70px; }
   .upcoming-list { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
-  .upcoming-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-  }
-  .upcoming-soon {
-    border-color: rgba(29,185,84,0.25);
-    background: rgba(29,185,84,0.04);
-  }
-  .upcoming-badge {
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 100px;
-    flex-shrink: 0;
-  }
+  .upcoming-item { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+  .upcoming-soon { border-color: rgba(29,185,84,0.25); background: rgba(29,185,84,0.04); }
+  .upcoming-badge { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; flex-shrink: 0; }
   .badge-soon { background: rgba(29,185,84,0.15); color: var(--green); border: 1px solid rgba(29,185,84,0.3); }
   .badge-later { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
   .upcoming-text { font-size: 0.82rem; color: var(--muted); flex: 1; line-height: 1.4; }
   .upcoming-icon { font-size: 1.1rem; flex-shrink: 0; }
 
-  /* ─── PRICING ─── */
+  /* ─── PRICING / CHECKOUT ─── */
   .pricing-section { padding: 70px 24px; }
-  .price-card {
+
+  .plan-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 32px 0 28px;
     background: var(--card);
-    border: 1px solid rgba(29,185,84,0.3);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .plan-toggle-btn {
+    padding: 10px 22px;
+    border-radius: 100px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: transparent;
+    color: var(--muted);
+    position: relative;
+  }
+
+  .plan-toggle-btn.active {
+    background: var(--green);
+    color: #000;
+    box-shadow: 0 2px 16px rgba(29,185,84,0.4);
+  }
+
+  .plan-toggle-btn .save-badge {
+    position: absolute;
+    top: -10px;
+    right: -6px;
+    background: #f59e0b;
+    color: #000;
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .plans-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 24px;
-    padding: 30px 24px;
-    margin-top: 36px;
+    padding: 26px 22px;
     position: relative;
     overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, opacity 0.3s;
   }
-  .price-card::before {
+
+  .plan-card.featured {
+    border-color: rgba(29,185,84,0.4);
+    background: linear-gradient(135deg, rgba(29,185,84,0.06), rgba(29,185,84,0.02));
+  }
+
+  .plan-card.featured::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; height: 2px;
     background: linear-gradient(90deg, transparent, var(--green), transparent);
   }
-  .price-tag {
-    display: inline-block;
-    background: var(--green-glow);
-    border: 1px solid rgba(29,185,84,0.3);
-    color: var(--green);
-    font-size: 0.65rem;
+
+  .plan-card.hidden {
+    display: none;
+  }
+
+  .plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.62rem;
     font-weight: 500;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 4px 12px;
     border-radius: 100px;
+    margin-bottom: 14px;
+  }
+
+  .plan-badge-green { background: var(--green-glow); border: 1px solid rgba(29,185,84,0.3); color: var(--green); }
+  .plan-badge-gold { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: #f59e0b; }
+
+  .plan-name {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .plan-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 12px 0 4px;
+  }
+
+  .plan-amount .currency { font-size: 1rem; color: var(--muted); font-weight: 400; }
+  .plan-amount .value { font-family: 'Fraunces', serif; font-size: 2.6rem; font-weight: 900; color: var(--green); line-height: 1; }
+  .plan-amount .period { font-size: 0.78rem; color: var(--muted); }
+
+  .plan-annual-detail {
+    font-size: 0.72rem;
+    color: var(--muted);
     margin-bottom: 16px;
   }
-  .price-amount {
-    font-family: 'Fraunces', serif;
-    font-size: 3rem;
-    font-weight: 900;
-    color: var(--green);
-    line-height: 1;
-  }
-  .price-amount sup { font-size: 1.2rem; vertical-align: top; margin-top: 0.6rem; display: inline-block; }
-  .price-period { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
-  .price-divider { height: 1px; background: var(--border); margin: 20px 0; }
-  .price-feature {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.82rem;
-    color: var(--muted);
-    margin-bottom: 12px;
-    line-height: 1.4;
-  }
-  .price-check { color: var(--green); flex-shrink: 0; }
 
-  /* ─── CTA ─── */
+  .plan-annual-detail strong { color: #f59e0b; }
+
+  .plan-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  .plan-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .plan-feature { display: flex; align-items: flex-start; gap: 9px; font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+  .plan-check { color: var(--green); flex-shrink: 0; font-size: 0.85rem; margin-top: 1px; }
+
+  /* ─── MERCADO PAGO CHECKOUT ─── */
+  .mp-checkout-area {
+    margin-top: 4px;
+  }
+
+  .btn-checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 100px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+
+  .btn-checkout-primary {
+    background: var(--green);
+    color: #000;
+    box-shadow: 0 0 30px rgba(29,185,84,0.35);
+  }
+  .btn-checkout-primary:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 40px rgba(29,185,84,0.45); }
+
+  .btn-checkout-secondary {
+    background: rgba(29,185,84,0.1);
+    color: var(--green);
+    border: 1px solid rgba(29,185,84,0.25);
+  }
+  .btn-checkout-secondary:hover { background: rgba(29,185,84,0.18); transform: translateY(-2px); }
+
+  .mp-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  .mp-logo img {
+    height: 16px;
+    opacity: 0.5;
+    filter: brightness(2);
+  }
+
+  .mp-shield {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .secure-badges {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .secure-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.63rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  /* Modal de checkout */
+  .checkout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .checkout-modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .checkout-modal {
+    background: #0f1a10;
+    border: 1px solid rgba(29,185,84,0.2);
+    border-radius: 28px 28px 0 0;
+    padding: 32px 24px 40px;
+    width: 100%;
+    max-width: 480px;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    max-height: 92svh;
+    overflow-y: auto;
+  }
+
+  .checkout-modal-overlay.open .checkout-modal {
+    transform: translateY(0);
+  }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 100px;
+    margin: 0 auto 24px;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+  .modal-plan-summary {
+    background: rgba(29,185,84,0.06);
+    border: 1px solid rgba(29,185,84,0.18);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-plan-name { font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .modal-plan-price { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 700; color: var(--green); }
+  .modal-plan-period { font-size: 0.7rem; color: var(--muted); }
+  .modal-plan-icon { font-size: 2rem; }
+
+  .modal-title { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .modal-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; display: block; letter-spacing: 0.03em; }
+
+  .form-input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus { border-color: rgba(29,185,84,0.5); }
+  .form-input::placeholder { color: rgba(255,255,255,0.2); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .mp-pay-btn {
+    width: 100%;
+    padding: 16px;
+    background: #009EE3; /* Azul Mercado Pago */
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 24px rgba(0,158,227,0.3);
+  }
+  .mp-pay-btn:hover { background: #0080b9; transform: translateY(-1px); }
+  .mp-pay-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .mp-pay-btn svg { width: 22px; height: 22px; }
+
+  .modal-security-note {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .mp-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+  }
+  .mp-divider::before, .mp-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .mp-divider span { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+
+  .mp-redirect-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    color: #009EE3;
+    border: 1px solid rgba(0,158,227,0.35);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .mp-redirect-btn:hover { background: rgba(0,158,227,0.08); }
+
+  .processing-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,13,9,0.92);
+    border-radius: 28px 28px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .processing-overlay.show { opacity: 1; pointer-events: all; }
+
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid rgba(29,185,84,0.2);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .processing-text { font-size: 0.88rem; color: var(--muted); }
+
+  /* ─── GARANTIA ─── */
+  .guarantee-strip {
+    margin: 0 20px;
+    background: rgba(29,185,84,0.04);
+    border: 1px solid rgba(29,185,84,0.15);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 50px;
+  }
+
+  .guarantee-icon { font-size: 2rem; flex-shrink: 0; }
+  .guarantee-title { font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .guarantee-desc { font-size: 0.73rem; color: var(--muted); line-height: 1.4; }
+
   .cta-section {
     margin: 0 20px 60px;
     background: linear-gradient(135deg, #0f2614, #0a1a0b);
@@ -639,14 +917,7 @@
     background: radial-gradient(circle, rgba(29,185,84,0.15), transparent 70%);
     pointer-events: none;
   }
-  .cta-section h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.9rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin-bottom: 12px;
-    line-height: 1.15;
-  }
+  .cta-section h2 { font-family: 'Fraunces', serif; font-size: 1.9rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 12px; line-height: 1.15; }
   .cta-section p { font-size: 0.88rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
 
   .btn-wa {
@@ -669,7 +940,6 @@
   }
   .btn-wa:hover { background: #20bd5a; transform: translateY(-2px); }
 
-  /* ─── FOOTER ─── */
   footer {
     padding: 30px 24px 40px;
     border-top: 1px solid var(--border);
@@ -678,64 +948,18 @@
     font-size: 0.75rem;
     line-height: 1.8;
   }
-  footer .footer-logo {
-    font-family: 'Fraunces', serif;
-    font-weight: 900;
-    font-size: 1.2rem;
-    color: var(--green);
-    display: block;
-    margin-bottom: 10px;
-  }
+  footer .footer-logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.2rem; color: var(--green); display: block; margin-bottom: 10px; }
 
-  /* ─── ANIMATIONS ─── */
   @keyframes fade-up {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.65s ease, transform 0.65s ease;
-  }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ─── WA ICON SVG ─── */
   .wa-svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
 
-  /* Typing indicator */
-  .typing-indicator {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    padding: 9px 13px;
-    background: #1a2e1c;
-    border-radius: 14px 14px 14px 4px;
-    align-self: flex-start;
-    width: fit-content;
-    opacity: 0;
-    animation: msg-in 0.4s ease 2.3s forwards;
-  }
-  .typing-dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--muted);
-    animation: typing 1.2s ease-in-out infinite;
-  }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typing {
-    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
-    30% { transform: translateY(-5px); opacity: 1; }
-  }
-
-  /* Float animation for phone */
-  .phone-wrap { animation: float 5s ease-in-out infinite; }
-  @keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  /* Scroll progress bar */
   .progress-bar {
     position: fixed;
     top: 0; left: 0;
@@ -755,9 +979,9 @@
 <!-- NAV -->
 <nav>
   <span class="nav-logo">MAYCON</span>
-  <a href="#cta" class="nav-cta">
+  <a href="#planos" class="nav-cta">
     <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-    Começar grátis
+    Ver planos
   </a>
 </nav>
 
@@ -771,7 +995,7 @@
   <h1>Seus gastos sob <span>controle</span> numa conversa</h1>
   <p class="hero-sub">MAYCON é sua IA financeira pessoal direto no WhatsApp. Registre gastos por texto, áudio ou foto — sem apps, sem planilha, sem complicação.</p>
   <div class="hero-actions">
-    <a href="#cta" class="btn-primary">
+    <a href="#planos" class="btn-primary">
       <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Quero experimentar
     </a>
@@ -849,7 +1073,6 @@
   <div class="section-label reveal">Funcionalidades</div>
   <h2 class="section-title reveal">Tudo que você precisa,<br>na palma da mão</h2>
   <p class="section-sub reveal">Sem downloads, sem cadastros complicados. Só você e o MAYCON no WhatsApp.</p>
-
   <div class="feat-grid">
     <div class="feat-card reveal">
       <div class="feat-icon">💬</div>
@@ -893,7 +1116,6 @@
 <section class="how-section" id="como-funciona">
   <div class="section-label reveal">Como funciona</div>
   <h2 class="section-title reveal">Simples como mandar<br>uma mensagem</h2>
-
   <div class="steps">
     <div class="step reveal">
       <div class="step-line-wrap">
@@ -988,27 +1210,93 @@
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="pricing-section">
+<!-- ─── PRICING / CHECKOUT ─── -->
+<section class="pricing-section" id="planos">
   <div class="section-label reveal">Planos</div>
-  <h2 class="section-title reveal">Comece grátis,<br>evolua no seu ritmo</h2>
+  <h2 class="section-title reveal">Escolha o seu<br>plano</h2>
+  <p class="section-sub reveal">Pague pelo que usar. Cancele quando quiser.</p>
 
-  <div class="price-card reveal">
-    <div class="price-tag">🚀 Acesso antecipado</div>
-    <div class="price-amount"><sup>R$</sup>0</div>
-    <div class="price-period">grátis durante o período beta</div>
-    <div class="price-divider"></div>
-    <div class="price-feature"><span class="price-check">✓</span>Registro por texto, áudio e foto</div>
-    <div class="price-feature"><span class="price-check">✓</span>Categorização automática por IA</div>
-    <div class="price-feature"><span class="price-check">✓</span>Resumos mensais completos</div>
-    <div class="price-feature"><span class="price-check">✓</span>Limite mensal + alertas automáticos</div>
-    <div class="price-feature"><span class="price-check">✓</span>Edição de gastos por WhatsApp</div>
-    <div class="price-feature"><span class="price-check">✓</span>Acesso antecipado ao dashboard web</div>
-    <div style="margin-top:24px">
-      <a href="#cta" class="btn-primary" style="max-width:100%">Começar agora — é grátis</a>
+  <!-- Toggle mensal / anual -->
+  <div class="plan-toggle reveal">
+    <button class="plan-toggle-btn active" id="btnMensal" onclick="switchPlan('mensal')">Mensal</button>
+    <button class="plan-toggle-btn" id="btnAnual" onclick="switchPlan('anual')">
+      Anual
+      <span class="save-badge">−72%</span>
+    </button>
+  </div>
+
+  <div class="plans-grid">
+    <!-- PLANO MENSAL -->
+    <div class="plan-card featured" id="cardMensal">
+      <div class="plan-badge plan-badge-green">💰 Mensal</div>
+      <div class="plan-name">Plano Mensal</div>
+      <div class="plan-amount">
+        <span class="currency">R$</span>
+        <span class="value">19</span>
+        <span class="period">,90 / mês</span>
+      </div>
+      <div class="plan-annual-detail">Cobrado mensalmente · cancele quando quiser</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature"><span class="plan-check">✓</span>Registro por texto, áudio e foto</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Categorização automática por IA</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Resumos mensais completos</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Limite mensal + alertas</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Edição de gastos por WhatsApp</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Acesso antecipado ao dashboard</div>
+      </div>
+      <div class="mp-checkout-area">
+        <button class="btn-checkout btn-checkout-primary" onclick="openCheckout('mensal')">
+          Assinar por R$ 19,90/mês
+        </button>
+        <div class="secure-badges">
+          <span class="secure-badge">🔒 Pagamento seguro</span>
+          <span class="secure-badge">🏦 Mercado Pago</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANO ANUAL -->
+    <div class="plan-card hidden" id="cardAnual">
+      <div class="plan-badge plan-badge-gold">🎉 Melhor valor</div>
+      <div class="plan-name">Plano Anual</div>
+      <div class="plan-amount">
+        <span class="currency">R$</span>
+        <span class="value">67</span>
+        <span class="period">,00 / ano</span>
+      </div>
+      <div class="plan-annual-detail">
+        Equivale a <strong>R$ 5,58/mês</strong> · você economiza R$ 171,80 por ano
+      </div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature"><span class="plan-check">✓</span>Tudo do plano mensal</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>72% de desconto no valor total</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Prioridade em novos recursos</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Acesso vitalício ao histórico</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Suporte prioritário</div>
+      </div>
+      <div class="mp-checkout-area">
+        <button class="btn-checkout btn-checkout-primary" onclick="openCheckout('anual')">
+          Assinar por R$ 67,00/ano
+        </button>
+        <div class="secure-badges">
+          <span class="secure-badge">🔒 Pagamento seguro</span>
+          <span class="secure-badge">🏦 Mercado Pago</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- GARANTIA -->
+<div class="guarantee-strip reveal">
+  <div class="guarantee-icon">🛡️</div>
+  <div>
+    <div class="guarantee-title">Satisfação garantida</div>
+    <div class="guarantee-desc">Não curtiu? Fale com a gente em até 7 dias e devolvemos 100% do valor.</div>
+  </div>
+</div>
 
 <!-- CTA -->
 <div class="cta-section" id="cta">
@@ -1027,26 +1315,257 @@
   <p style="margin-top:8px">Feito com 💚 no Brasil</p>
 </footer>
 
+<!-- ─── CHECKOUT MODAL ─── -->
+<div class="checkout-modal-overlay" id="checkoutModal" onclick="handleOverlayClick(event)">
+  <div class="checkout-modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeCheckout()">✕</button>
+
+    <div class="modal-plan-summary" id="modalPlanSummary">
+      <div>
+        <div class="modal-plan-name" id="modalPlanName">Plano Mensal</div>
+        <div class="modal-plan-price" id="modalPlanPrice">R$ 19,90</div>
+        <div class="modal-plan-period" id="modalPlanPeriod">por mês</div>
+      </div>
+      <div class="modal-plan-icon" id="modalPlanIcon">💰</div>
+    </div>
+
+    <div class="modal-title">Finalizar assinatura</div>
+    <div class="modal-sub">Você será redirecionado para o checkout seguro do Mercado Pago para concluir o pagamento.</div>
+
+    <!-- Opção: redirecionar ao MP -->
+    <button class="mp-pay-btn" id="mpPayBtn" onclick="redirectToMercadoPago()">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2z" fill="#fff" fill-opacity=".2"/>
+        <path d="M22.5 13.5c0 3.59-2.91 6.5-6.5 6.5a6.5 6.5 0 01-6.5-6.5c0-.276.224-.5.5-.5h12c.276 0 .5.224.5.5z" fill="#fff"/>
+        <circle cx="11" cy="19.5" r="2" fill="#fff"/>
+        <circle cx="21" cy="19.5" r="2" fill="#fff"/>
+      </svg>
+      Pagar com Mercado Pago
+    </button>
+
+    <div class="mp-divider">
+      <span>ou pague diretamente aqui</span>
+    </div>
+
+    <!-- Formulário inline (para integração com MP Bricks depois) -->
+    <div class="form-group">
+      <label class="form-label">Nome completo</label>
+      <input type="text" class="form-input" id="payerName" placeholder="Seu nome">
+    </div>
+    <div class="form-group">
+      <label class="form-label">E-mail</label>
+      <input type="email" class="form-input" id="payerEmail" placeholder="seu@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">CPF</label>
+      <input type="text" class="form-input" id="payerCPF" placeholder="000.000.000-00" maxlength="14">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Número do cartão</label>
+      <input type="text" class="form-input" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Validade</label>
+        <input type="text" class="form-input" id="cardExpiry" placeholder="MM/AA" maxlength="5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">CVV</label>
+        <input type="text" class="form-input" id="cardCVV" placeholder="123" maxlength="4">
+      </div>
+    </div>
+
+    <button class="mp-pay-btn" onclick="processPayment()" id="payBtn">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2z" fill="#fff" fill-opacity=".2"/>
+        <path d="M22.5 13.5c0 3.59-2.91 6.5-6.5 6.5a6.5 6.5 0 01-6.5-6.5c0-.276.224-.5.5-.5h12c.276 0 .5.224.5.5z" fill="#fff"/>
+        <circle cx="11" cy="19.5" r="2" fill="#fff"/>
+        <circle cx="21" cy="19.5" r="2" fill="#fff"/>
+      </svg>
+      <span id="payBtnText">Confirmar pagamento</span>
+    </button>
+
+    <div class="modal-security-note">
+      🔒 Pagamento 100% seguro · SSL · Mercado Pago
+    </div>
+
+    <div class="processing-overlay" id="processingOverlay">
+      <div class="spinner"></div>
+      <div class="processing-text">Processando pagamento…</div>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Scroll progress bar
+  // ─── SCROLL PROGRESS ───
   window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const maxScroll = document.body.scrollHeight - window.innerHeight;
-    const pct = (scrolled / maxScroll) * 100;
+    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
     document.getElementById('progressBar').style.width = pct + '%';
   });
 
-  // Reveal on scroll
+  // ─── REVEAL ON SCROLL ───
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
     });
   }, { threshold: 0.12 });
   reveals.forEach(r => observer.observe(r));
+
+  // ─── PLAN TOGGLE ───
+  function switchPlan(tipo) {
+    const btnMensal = document.getElementById('btnMensal');
+    const btnAnual = document.getElementById('btnAnual');
+    const cardMensal = document.getElementById('cardMensal');
+    const cardAnual = document.getElementById('cardAnual');
+
+    if (tipo === 'mensal') {
+      btnMensal.classList.add('active');
+      btnAnual.classList.remove('active');
+      cardMensal.classList.remove('hidden');
+      cardAnual.classList.add('hidden');
+    } else {
+      btnAnual.classList.add('active');
+      btnMensal.classList.remove('active');
+      cardAnual.classList.remove('hidden');
+      cardMensal.classList.add('hidden');
+    }
+  }
+
+  // ─── CHECKOUT MODAL ───
+  let currentPlan = 'mensal';
+
+  const plans = {
+    mensal: {
+      name: 'Plano Mensal',
+      price: 'R$ 19,90',
+      period: 'por mês',
+      icon: '💰',
+      amount: 19.90,
+      // Substitua pela sua preference_id do Mercado Pago para o plano mensal:
+      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLAN_ID_MENSAL'
+    },
+    anual: {
+      name: 'Plano Anual',
+      price: 'R$ 67,00',
+      period: 'por ano',
+      icon: '🎉',
+      amount: 67.00,
+      // Substitua pela sua preference_id do Mercado Pago para o plano anual:
+      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLAN_ID_ANUAL'
+    }
+  };
+
+  function openCheckout(plan) {
+    currentPlan = plan;
+    const p = plans[plan];
+    document.getElementById('modalPlanName').textContent = p.name;
+    document.getElementById('modalPlanPrice').textContent = p.price;
+    document.getElementById('modalPlanPeriod').textContent = p.period;
+    document.getElementById('modalPlanIcon').textContent = p.icon;
+    document.getElementById('checkoutModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCheckout() {
+    document.getElementById('checkoutModal').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('processingOverlay').classList.remove('show');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('checkoutModal')) closeCheckout();
+  }
+
+  // Redireciona para o checkout do Mercado Pago (assinatura)
+  function redirectToMercadoPago() {
+    const p = plans[currentPlan];
+    // Abre o link de checkout do MP numa nova aba
+    window.open(p.mp_link, '_blank');
+    closeCheckout();
+  }
+
+  // Formatações do formulário
+  document.getElementById('cardNumber').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '').substring(0, 16);
+    this.value = v.replace(/(.{4})/g, '$1 ').trim();
+  });
+
+  document.getElementById('cardExpiry').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '').substring(0, 4);
+    if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
+    this.value = v;
+  });
+
+  document.getElementById('payerCPF').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '').substring(0, 11);
+    v = v.replace(/(\d{3})(\d)/, '$1.$2');
+    v = v.replace(/(\d{3})(\d)/, '$1.$2');
+    v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    this.value = v;
+  });
+
+  // ─── PROCESSAR PAGAMENTO (integrar com MP SDK) ───
+  async function processPayment() {
+    const name = document.getElementById('payerName').value.trim();
+    const email = document.getElementById('payerEmail').value.trim();
+    const cpf = document.getElementById('payerCPF').value.trim();
+    const card = document.getElementById('cardNumber').value.trim();
+    const expiry = document.getElementById('cardExpiry').value.trim();
+    const cvv = document.getElementById('cardCVV').value.trim();
+
+    if (!name || !email || !cpf || !card || !expiry || !cvv) {
+      alert('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    document.getElementById('processingOverlay').classList.add('show');
+    document.getElementById('payBtn').disabled = true;
+
+    try {
+      /*
+       * ─────────────────────────────────────────────────────────────
+       * INTEGRAÇÃO MERCADO PAGO
+       *
+       * Para integrar de verdade, você precisa:
+       *
+       * 1. Criar uma preferência de pagamento no seu backend:
+       *    POST https://api.mercadopago.com/checkout/preferences
+       *    com seu ACCESS_TOKEN de produção.
+       *
+       * 2. Usar o MP SDK para tokenizar o cartão:
+       *    const mp = new MercadoPago('SUA_PUBLIC_KEY');
+       *    const cardToken = await mp.createCardToken({ ... });
+       *
+       * 3. Enviar o token + dados do comprador ao seu backend
+       *    para criar o pagamento:
+       *    POST https://api.mercadopago.com/v1/payments
+       *
+       * 4. Tratar retorno (approved, pending, rejected).
+       *
+       * Documentação: https://www.mercadopago.com.br/developers
+       * ─────────────────────────────────────────────────────────────
+       *
+       * Por ora, simulando delay de processamento e redirecionando
+       * para o link de checkout do MP como fallback seguro:
+       */
+
+      await new Promise(r => setTimeout(r, 1800));
+
+      // Redireciona para o checkout oficial do MP
+      window.open(plans[currentPlan].mp_link, '_blank');
+      closeCheckout();
+
+    } catch (err) {
+      document.getElementById('processingOverlay').classList.remove('show');
+      document.getElementById('payBtn').disabled = false;
+      alert('Erro ao processar. Tente novamente ou use o botão "Pagar com Mercado Pago".');
+    }
+  }
+
+  // Fechar modal com ESC
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCheckout(); });
 </script>
 </body>
 </html>
