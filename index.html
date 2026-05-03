@@ -1495,7 +1495,6 @@
   }
 
   // ─── PROCESSAR PAGAMENTO (formulário inline) ───
-  async function processPayment() {
     const whatsappRaw = document.getElementById('payerWhatsapp').value.trim();
     const whatsappDigits = whatsappRaw.replace(/\D/g, '');
     const name = document.getElementById('payerName').value.trim();
