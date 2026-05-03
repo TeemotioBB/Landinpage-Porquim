@@ -792,7 +792,7 @@
   .mp-pay-btn {
     width: 100%;
     padding: 16px;
-    background: #009EE3; /* Azul Mercado Pago */
+    background: #009EE3;
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -1348,7 +1348,7 @@
       <span>ou pague diretamente aqui</span>
     </div>
 
-    <!-- Formulário inline (para integração com MP Bricks depois) -->
+    <!-- Formulário inline -->
     <div class="form-group">
       <label class="form-label">Nome completo</label>
       <input type="text" class="form-input" id="payerName" placeholder="Seu nome">
@@ -1443,8 +1443,7 @@
       period: 'por mês',
       icon: '💰',
       amount: 19.90,
-      // Substitua pela sua preference_id do Mercado Pago para o plano mensal:
-      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLAN_ID_MENSAL'
+      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=f15af89e807f4cfabac9f1239372a0bc'
     },
     anual: {
       name: 'Plano Anual',
@@ -1452,8 +1451,7 @@
       period: 'por ano',
       icon: '🎉',
       amount: 67.00,
-      // Substitua pela sua preference_id do Mercado Pago para o plano anual:
-      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_PLAN_ID_ANUAL'
+      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=9545155b888d4070b494631b368136fa'
     }
   };
 
@@ -1478,10 +1476,8 @@
     if (e.target === document.getElementById('checkoutModal')) closeCheckout();
   }
 
-  // Redireciona para o checkout do Mercado Pago (assinatura)
   function redirectToMercadoPago() {
     const p = plans[currentPlan];
-    // Abre o link de checkout do MP numa nova aba
     window.open(p.mp_link, '_blank');
     closeCheckout();
   }
@@ -1506,7 +1502,7 @@
     this.value = v;
   });
 
-  // ─── PROCESSAR PAGAMENTO (integrar com MP SDK) ───
+  // ─── PROCESSAR PAGAMENTO ───
   async function processPayment() {
     const name = document.getElementById('payerName').value.trim();
     const email = document.getElementById('payerEmail').value.trim();
@@ -1524,39 +1520,9 @@
     document.getElementById('payBtn').disabled = true;
 
     try {
-      /*
-       * ─────────────────────────────────────────────────────────────
-       * INTEGRAÇÃO MERCADO PAGO
-       *
-       * Para integrar de verdade, você precisa:
-       *
-       * 1. Criar uma preferência de pagamento no seu backend:
-       *    POST https://api.mercadopago.com/checkout/preferences
-       *    com seu ACCESS_TOKEN de produção.
-       *
-       * 2. Usar o MP SDK para tokenizar o cartão:
-       *    const mp = new MercadoPago('SUA_PUBLIC_KEY');
-       *    const cardToken = await mp.createCardToken({ ... });
-       *
-       * 3. Enviar o token + dados do comprador ao seu backend
-       *    para criar o pagamento:
-       *    POST https://api.mercadopago.com/v1/payments
-       *
-       * 4. Tratar retorno (approved, pending, rejected).
-       *
-       * Documentação: https://www.mercadopago.com.br/developers
-       * ─────────────────────────────────────────────────────────────
-       *
-       * Por ora, simulando delay de processamento e redirecionando
-       * para o link de checkout do MP como fallback seguro:
-       */
-
       await new Promise(r => setTimeout(r, 1800));
-
-      // Redireciona para o checkout oficial do MP
       window.open(plans[currentPlan].mp_link, '_blank');
       closeCheckout();
-
     } catch (err) {
       document.getElementById('processingOverlay').classList.remove('show');
       document.getElementById('payBtn').disabled = false;
