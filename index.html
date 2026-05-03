@@ -1331,13 +1331,17 @@
     </div>
 
     <div class="modal-title">Finalizar assinatura</div>
-    <div class="modal-sub">Informe seu WhatsApp para receber o acesso automaticamente após o pagamento.</div>
+    <div class="modal-sub">Informe seu WhatsApp e e-mail para receber o acesso após o pagamento.</div>
 
-    <!-- Campo WhatsApp obrigatório -->
-    <div class="form-group" style="margin-bottom:18px">
+    <!-- Campos WhatsApp + Email obrigatórios -->
+    <div class="form-group" style="margin-bottom:14px">
       <label class="form-label">📱 Seu WhatsApp (com DDD)</label>
       <input type="tel" class="form-input" id="payerWhatsapp" placeholder="31 99999-9999" maxlength="15">
-      <div style="font-size:0.68rem;color:var(--muted);margin-top:5px">Você receberá a confirmação neste número</div>
+    </div>
+    <div class="form-group" style="margin-bottom:18px">
+      <label class="form-label">✉️ Seu e-mail</label>
+      <input type="email" class="form-input" id="payerEmailCheckout" placeholder="seu@email.com">
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:5px">Enviaremos o link de acesso por aqui também</div>
     </div>
 
     <!-- Opção: redirecionar ao MP -->
@@ -1485,16 +1489,25 @@
     });
   });
 
-  // ─── REDIRECIONAR AO MERCADO PAGO (com WhatsApp vinculado) ───
+  // ─── REDIRECIONAR AO MERCADO PAGO (com WhatsApp + email vinculados) ───
   async function redirectToMercadoPago() {
     const whatsappRaw = document.getElementById('payerWhatsapp').value.trim();
     const whatsappDigits = whatsappRaw.replace(/\D/g, '');
+    const email = document.getElementById('payerEmailCheckout').value.trim();
 
     if (whatsappDigits.length < 10) {
       document.getElementById('payerWhatsapp').focus();
       document.getElementById('payerWhatsapp').style.borderColor = '#ef4444';
       setTimeout(() => document.getElementById('payerWhatsapp').style.borderColor = '', 2000);
       alert('Digite seu número de WhatsApp com DDD (ex: 31 99999-9999)');
+      return;
+    }
+
+    if (!email || !email.includes('@')) {
+      document.getElementById('payerEmailCheckout').focus();
+      document.getElementById('payerEmailCheckout').style.borderColor = '#ef4444';
+      setTimeout(() => document.getElementById('payerEmailCheckout').style.borderColor = '', 2000);
+      alert('Digite um e-mail válido para receber o link de acesso.');
       return;
     }
 
@@ -1505,19 +1518,16 @@
     btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div> Gerando link...';
 
     try {
-      // Chama a API do bot para criar um link de pagamento personalizado
       const res = await fetch(`${API_URL}/criar-preferencia`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plano: currentPlan, whatsapp: whatsappDigits })
+        body: JSON.stringify({ plano: currentPlan, whatsapp: whatsappDigits, email: email })
       });
 
       if (!res.ok) throw new Error('Erro na API: ' + res.status);
       const data = await res.json();
-
       if (!data.link) throw new Error('Link não retornado');
 
-      // Redireciona para o checkout do MP com o WhatsApp já vinculado
       window.open(data.link, '_blank');
       closeCheckout();
 
