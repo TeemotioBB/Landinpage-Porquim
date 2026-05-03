@@ -1331,7 +1331,14 @@
     </div>
 
     <div class="modal-title">Finalizar assinatura</div>
-    <div class="modal-sub">Você será redirecionado para o checkout seguro do Mercado Pago para concluir o pagamento.</div>
+    <div class="modal-sub">Informe seu WhatsApp para receber o acesso automaticamente após o pagamento.</div>
+
+    <!-- Campo WhatsApp obrigatório -->
+    <div class="form-group" style="margin-bottom:18px">
+      <label class="form-label">📱 Seu WhatsApp (com DDD)</label>
+      <input type="tel" class="form-input" id="payerWhatsapp" placeholder="31 99999-9999" maxlength="15">
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:5px">Você receberá a confirmação neste número</div>
+    </div>
 
     <!-- Opção: redirecionar ao MP -->
     <button class="mp-pay-btn" id="mpPayBtn" onclick="redirectToMercadoPago()">
@@ -1433,26 +1440,16 @@
     }
   }
 
+  // ─── CONFIG ───
+  // 🔧 Troque pela URL do seu app no Railway
+  const API_URL = 'https://porquim-20-production.up.railway.app/';
+
   // ─── CHECKOUT MODAL ───
   let currentPlan = 'mensal';
 
   const plans = {
-    mensal: {
-      name: 'Plano Mensal',
-      price: 'R$ 19,90',
-      period: 'por mês',
-      icon: '💰',
-      amount: 19.90,
-      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=f15af89e807f4cfabac9f1239372a0bc'
-    },
-    anual: {
-      name: 'Plano Anual',
-      price: 'R$ 67,00',
-      period: 'por ano',
-      icon: '🎉',
-      amount: 67.00,
-      mp_link: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=9545155b888d4070b494631b368136fa'
-    }
+    mensal: { name: 'Plano Mensal', price: 'R$ 19,90', period: 'por mês', icon: '💰', amount: 19.90 },
+    anual:  { name: 'Plano Anual',  price: 'R$ 67,00', period: 'por ano',  icon: '🎉', amount: 67.00 }
   };
 
   function openCheckout(plan) {
@@ -1462,6 +1459,8 @@
     document.getElementById('modalPlanPrice').textContent = p.price;
     document.getElementById('modalPlanPeriod').textContent = p.period;
     document.getElementById('modalPlanIcon').textContent = p.icon;
+    // Limpa o campo de WhatsApp ao abrir
+    document.getElementById('payerWhatsapp').value = '';
     document.getElementById('checkoutModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -1476,13 +1475,62 @@
     if (e.target === document.getElementById('checkoutModal')) closeCheckout();
   }
 
-  function redirectToMercadoPago() {
-    const p = plans[currentPlan];
-    window.open(p.mp_link, '_blank');
-    closeCheckout();
+  // Formata o campo WhatsApp enquanto digita
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('payerWhatsapp').addEventListener('input', function() {
+      let v = this.value.replace(/\D/g, '').substring(0, 11);
+      if (v.length > 2) v = v.substring(0,2) + ' ' + v.substring(2);
+      if (v.length > 10) v = v.substring(0,10) + '-' + v.substring(10);
+      this.value = v;
+    });
+  });
+
+  // ─── REDIRECIONAR AO MERCADO PAGO (com WhatsApp vinculado) ───
+  async function redirectToMercadoPago() {
+    const whatsappRaw = document.getElementById('payerWhatsapp').value.trim();
+    const whatsappDigits = whatsappRaw.replace(/\D/g, '');
+
+    if (whatsappDigits.length < 10) {
+      document.getElementById('payerWhatsapp').focus();
+      document.getElementById('payerWhatsapp').style.borderColor = '#ef4444';
+      setTimeout(() => document.getElementById('payerWhatsapp').style.borderColor = '', 2000);
+      alert('Digite seu número de WhatsApp com DDD (ex: 31 99999-9999)');
+      return;
+    }
+
+    // Mostra loading
+    const btn = document.getElementById('mpPayBtn');
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div> Gerando link...';
+
+    try {
+      // Chama a API do bot para criar um link de pagamento personalizado
+      const res = await fetch(`${API_URL}/criar-preferencia`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plano: currentPlan, whatsapp: whatsappDigits })
+      });
+
+      if (!res.ok) throw new Error('Erro na API: ' + res.status);
+      const data = await res.json();
+
+      if (!data.link) throw new Error('Link não retornado');
+
+      // Redireciona para o checkout do MP com o WhatsApp já vinculado
+      window.open(data.link, '_blank');
+      closeCheckout();
+
+    } catch (err) {
+      console.error('Erro ao gerar link:', err);
+      alert('Não foi possível gerar o link de pagamento. Verifique sua conexão e tente novamente.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+    }
   }
 
-  // Formatações do formulário
+  // Formatações do formulário de cartão (mantido para uso futuro)
   document.getElementById('cardNumber').addEventListener('input', function() {
     let v = this.value.replace(/\D/g, '').substring(0, 16);
     this.value = v.replace(/(.{4})/g, '$1 ').trim();
@@ -1502,14 +1550,22 @@
     this.value = v;
   });
 
-  // ─── PROCESSAR PAGAMENTO ───
+  // ─── PROCESSAR PAGAMENTO (formulário inline) ───
   async function processPayment() {
+    const whatsappRaw = document.getElementById('payerWhatsapp').value.trim();
+    const whatsappDigits = whatsappRaw.replace(/\D/g, '');
     const name = document.getElementById('payerName').value.trim();
     const email = document.getElementById('payerEmail').value.trim();
     const cpf = document.getElementById('payerCPF').value.trim();
     const card = document.getElementById('cardNumber').value.trim();
     const expiry = document.getElementById('cardExpiry').value.trim();
     const cvv = document.getElementById('cardCVV').value.trim();
+
+    if (whatsappDigits.length < 10) {
+      alert('Digite seu WhatsApp com DDD antes de continuar.');
+      document.getElementById('payerWhatsapp').focus();
+      return;
+    }
 
     if (!name || !email || !cpf || !card || !expiry || !cvv) {
       alert('Por favor, preencha todos os campos.');
@@ -1520,8 +1576,16 @@
     document.getElementById('payBtn').disabled = true;
 
     try {
-      await new Promise(r => setTimeout(r, 1800));
-      window.open(plans[currentPlan].mp_link, '_blank');
+      // Gera link personalizado antes de redirecionar
+      const res = await fetch(`${API_URL}/criar-preferencia`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plano: currentPlan, whatsapp: whatsappDigits })
+      });
+
+      if (!res.ok) throw new Error('API error');
+      const data = await res.json();
+      window.open(data.link, '_blank');
       closeCheckout();
     } catch (err) {
       document.getElementById('processingOverlay').classList.remove('show');
