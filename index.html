@@ -1494,47 +1494,6 @@
     }
   }
 
-    const whatsappRaw = document.getElementById('payerWhatsapp').value.trim();
-    const whatsappDigits = whatsappRaw.replace(/\D/g, '');
-    const name = document.getElementById('payerName').value.trim();
-    const email = document.getElementById('payerEmail').value.trim();
-    const cpf = document.getElementById('payerCPF').value.trim();
-    const card = document.getElementById('cardNumber').value.trim();
-    const expiry = document.getElementById('cardExpiry').value.trim();
-    const cvv = document.getElementById('cardCVV').value.trim();
-
-    if (whatsappDigits.length < 10) {
-      alert('Digite seu WhatsApp com DDD antes de continuar.');
-      document.getElementById('payerWhatsapp').focus();
-      return;
-    }
-
-    if (!name || !email || !cpf || !card || !expiry || !cvv) {
-      alert('Por favor, preencha todos os campos.');
-      return;
-    }
-
-    document.getElementById('processingOverlay').classList.add('show');
-    document.getElementById('payBtn').disabled = true;
-
-    try {
-      // Gera link personalizado antes de redirecionar
-      const res = await fetch(`${API_URL}/criar-preferencia`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plano: currentPlan, whatsapp: whatsappDigits })
-      });
-
-      if (!res.ok) throw new Error('API error');
-      const data = await res.json();
-      window.open(data.link, '_blank');
-      closeCheckout();
-    } catch (err) {
-      document.getElementById('processingOverlay').classList.remove('show');
-      document.getElementById('payBtn').disabled = false;
-      alert('Erro ao processar. Tente novamente ou use o botão "Pagar com Mercado Pago".');
-    }
-  }
 
   // Fechar modal com ESC
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCheckout(); });
