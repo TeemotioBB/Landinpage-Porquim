@@ -970,6 +970,62 @@
     transition: width 0.1s;
     box-shadow: 0 0 8px var(--green);
   }
+
+  /* ─── FAQ ─── */
+  .faq-section { padding: 0 24px 70px; }
+  .faq-list { margin-top: 28px; display: flex; flex-direction: column; gap: 8px; }
+  .faq-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .faq-item.open { border-color: rgba(29,185,84,0.3); }
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    cursor: pointer;
+    gap: 12px;
+    user-select: none;
+  }
+  .faq-question-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    flex: 1;
+  }
+  .faq-arrow {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--green-glow);
+    border: 1px solid rgba(29,185,84,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.3s;
+    color: var(--green);
+    font-size: 0.7rem;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); background: rgba(29,185,84,0.2); }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .faq-answer-inner {
+    padding: 0 18px 16px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+
 </style>
 </head>
 <body>
@@ -1109,16 +1165,6 @@
       <div class="feat-title">Editar gastos</div>
       <div class="feat-desc">Errou? "editar 3 Uber 55 pix" e pronto. Cada gasto tem um código único.</div>
     </div>
-    <div class="feat-card reveal">
-      <div class="feat-icon">🔔</div>
-      <div class="feat-title">Lembretes inteligentes</div>
-      <div class="feat-desc">Agende lembretes com linguagem natural. "Me lembra do boleto amanhã às 10h" — e o Johnny te avisa na hora certa.</div>
-    </div>
-    <div class="feat-card full reveal">
-      <div class="feat-icon">📱</div>
-      <div class="feat-title">Dashboard web</div>
-      <div class="feat-desc">Acesse seu painel de gastos pelo celular ou computador. Gráficos por categoria, evolução mensal, saldo e muito mais — tudo em tempo real.</div>
-    </div>
   </div>
 </section>
 
@@ -1203,6 +1249,23 @@
   </div>
 </section>
 
+<!-- JÁ DISPONÍVEL -->
+<section class="upcoming-section">
+  <div class="section-label reveal">Já disponível</div>
+  <h2 class="section-title reveal">O Johnny<br>já faz tudo isso</h2>
+  <div class="upcoming-list">
+    <div class="upcoming-item upcoming-soon reveal">
+      <span class="upcoming-icon">📱</span>
+      <div class="upcoming-text">Dashboard web com gráficos e visão completa dos seus gastos — acesse pelo celular ou computador</div>
+      <span class="upcoming-badge badge-soon">Disponível</span>
+    </div>
+    <div class="upcoming-item upcoming-soon reveal">
+      <span class="upcoming-icon">🔔</span>
+      <div class="upcoming-text">Lembretes inteligentes pelo WhatsApp — defina no horário que quiser com linguagem natural</div>
+      <span class="upcoming-badge badge-soon">Disponível</span>
+    </div>
+  </div>
+</section>
 
 
 <!-- ─── PRICING / CHECKOUT ─── -->
@@ -1227,7 +1290,7 @@
       <div class="plan-name">Plano Mensal</div>
       <div class="plan-amount">
         <span class="currency">R$</span>
-        <span class="value">19</span>
+        <span class="value">1</span>
         <span class="period">,90 / mês</span>
       </div>
       <div class="plan-annual-detail">Cobrado mensalmente · cancele quando quiser</div>
@@ -1242,7 +1305,7 @@
       </div>
       <div class="mp-checkout-area">
         <button class="btn-checkout btn-checkout-primary" onclick="openCheckout('mensal')">
-          Assinar por R$ 19,90/mês
+          Assinar por R$ 1,90/mês
         </button>
         <div class="secure-badges">
           <span class="secure-badge">🔒 Pagamento seguro</span>
@@ -1325,6 +1388,115 @@
   </a>
 </div>
 
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="section-label reveal">Dúvidas frequentes</div>
+  <h2 class="section-title reveal">Perguntas<br>e respostas</h2>
+  <div class="faq-list reveal">
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Preciso instalar algum aplicativo?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Não. O Johnny funciona 100% pelo WhatsApp. Só salvar o número e começar a usar.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Funciona no iPhone e no Android?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Sim, em qualquer celular que tenha WhatsApp instalado.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Como registro um gasto?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">É só mandar uma mensagem como "iFood 45 cartão" ou "Uber 23 pix". Pode ser texto, áudio ou foto de comprovante.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Como funciona a cobrança?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Você escolhe o plano mensal (R$ 19,90) ou anual (R$ 67,00) e paga uma única vez. Não há cobrança automática — você renova quando quiser.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Posso cancelar quando quiser?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Sim. Não existe fidelidade. Quando sua assinatura vencer, simplesmente não renova.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">O pagamento é seguro?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Sim. O pagamento é processado pelo Mercado Pago, uma das plataformas mais seguras do Brasil.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Como ativo meu acesso após o pagamento?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Assim que o pagamento for confirmado, você recebe uma mensagem automática no WhatsApp com as instruções. Também enviamos um email com o link de ativação.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">E se eu não receber o email de ativação?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Verifique a caixa de spam. Se não encontrar, entre em contato com o suporte pelo WhatsApp e ativamos manualmente em minutos.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Minhas conversas ficam salvas?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Apenas os dados financeiros que você registra — gastos, entradas e lembretes. Conversas do WhatsApp não são armazenadas.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-question-text">Meus dados são compartilhados com alguém?</span>
+        <span class="faq-arrow">▾</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">Não. Seus dados são seus e ficam armazenados em servidores seguros. Não compartilhamos com terceiros.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <span class="footer-logo">Johnny</span>
@@ -1341,7 +1513,7 @@
     <div class="modal-plan-summary" id="modalPlanSummary">
       <div>
         <div class="modal-plan-name" id="modalPlanName">Plano Mensal</div>
-        <div class="modal-plan-price" id="modalPlanPrice">R$ 19,90</div>
+        <div class="modal-plan-price" id="modalPlanPrice">R$ 1,90</div>
         <div class="modal-plan-period" id="modalPlanPeriod">por mês</div>
       </div>
       <div class="modal-plan-icon" id="modalPlanIcon">💰</div>
@@ -1417,13 +1589,13 @@
 
   // ─── CONFIG ───
   // 🔧 Troque pela URL do seu app no Railway
-  const API_URL = 'https://johnny-20-production.up.railway.app';
+  const API_URL = 'https://porquim-20-production.up.railway.app';
 
   // ─── CHECKOUT MODAL ───
   let currentPlan = 'mensal';
 
   const plans = {
-    mensal: { name: 'Plano Mensal', price: 'R$ 19,90', period: 'por mês', icon: '💰', amount: 19.90 },
+    mensal: { name: 'Plano Mensal', price: 'R$ 1,90', period: 'por mês', icon: '💰', amount: 1.90 },
     anual:  { name: 'Plano Anual',  price: 'R$ 67,00', period: 'por ano',  icon: '🎉', amount: 67.00 }
   };
 
@@ -1511,6 +1683,21 @@
     }
   }
 
+
+
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const answer = item.querySelector('.faq-answer');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-answer').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
 
   // Fechar modal com ESC
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCheckout(); });
